@@ -11,7 +11,11 @@ const galleryElement = document.querySelector('.gallery');
 
 let lightbox;
 
-loader.style.display = 'block';
+function toggleLoader(display) {
+  loader.style.display = display;
+}
+
+loader.style.display = 'none';
 
 form.addEventListener('submit', async e => {
   e.preventDefault();
@@ -25,6 +29,8 @@ form.addEventListener('submit', async e => {
     });
     return;
   }
+
+  toggleLoader('block');
 
   try {
     const images = await searchImages(input);
@@ -54,7 +60,7 @@ form.addEventListener('submit', async e => {
   } catch (error) {
     console.error('Error', error);
   } finally {
-    loader.style.display = 'none';
+    toggleLoader('none');
   }
 });
 
