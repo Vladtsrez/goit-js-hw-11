@@ -63,6 +63,7 @@ form.addEventListener('submit', async e => {
     toggleLoader('none');
   }
 });
+//
 
 //import './js/pixabay-api';
 
