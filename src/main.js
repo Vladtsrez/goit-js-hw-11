@@ -9,7 +9,11 @@ const loader = document.querySelector('.loader');
 const form = document.getElementById('searchForm');
 const galleryElement = document.querySelector('.gallery');
 
-let lightbox;
+const lightbox = new SimpleLightbox('.card .place-for-image a', {
+  captions: true,
+  captionsData: 'alt',
+  captionDelay: 250,
+});
 
 function toggleLoader(display) {
   loader.style.display = display;
@@ -17,52 +21,64 @@ function toggleLoader(display) {
 
 loader.style.display = 'none';
 
-form.addEventListener('submit', async e => {
+form.addEventListener('submit', search);
+
+async function search(e) {
   e.preventDefault();
 
-  const input = document.getElementById('searchInput').value.trim();
+  galleryElement.innerHTML = '';
 
-  if (input === '') {
-    iziToast.warning({
-      title: 'Caution',
-      message: 'Please enter a search query.',
-    });
-    return;
-  }
+  const input = e.currentTarget.elements.searchInput.value;
 
-  toggleLoader('block');
+  searchImages(input, loader, galleryElement)
+    .then(data => {
+      if (data.total == 0) {
+        iziToast.warning({
+          title: 'Caution',
+          message:
+            'Sorry, there are no images matching your search query. Please try again!',
+        });
 
-  try {
-    const images = await searchImages(input);
-    galleryElement.innerHTML = '';
-
-    if (images.length === 0) {
+        return 0;
+      } else {
+        galleryElement.insertAdjacentHTML('beforeend', addImageCard(data));
+        lightbox.refresh();
+        e.target.reset();
+      }
+    })
+    .catch(error => {
       iziToast.warning({
         title: 'Caution',
-        message:
-          'Sorry, there are no images matching your search query. Please try again!',
+        message: error,
       });
-    } else {
-      images.forEach(image => {
-        addImageCard(image);
-      });
+    })
+    .finally(() => {
+      toggleLoader('none');
+    });
+}
 
-      if (!lightbox) {
-        const lightbox = new SimpleLightbox('.gallery-link', {
-          captions: true,
-          captionsData: 'alt',
-          captionDelay: 250,
-        });
-      } else {
-        lightbox.refresh();
-      }
-    }
-  } catch (error) {
-    console.error('Error', error);
-  } finally {
-    toggleLoader('none');
-  }
-});
+//toggleLoader('block');
+
+//try {
+//  const images = searchImages(input);
+//  galleryElement.innerHTML = '';
+
+//if (images.length === 0) {
+//  iziToast.warning({
+//    title: 'Caution',
+//    message:
+//      'Sorry, there are no images matching your search query. Please try again!',
+//  });
+//return 0;
+//      }
+
+//    } catch (error) {
+//      console.error('Error', error);
+//    }
+//    }
+//  });
+//});
+
 //
 
 //import './js/pixabay-api';

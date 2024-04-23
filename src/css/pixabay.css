@@ -34,14 +34,14 @@ form > button {
 
 }
 
-.gallery-item {
+.card {
   border: 1px solid #808080;
   flex: 0 0 33%;
 }
 
-.image-info {
+.info-text {
   display: flex;
-    font-family: "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   gap: 20px;
   justify-content: center;
   align-items: center;
